@@ -2,13 +2,13 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import itemRouter from "./routes/itemRouter.js";
+import userRouter from "./routes/userRouter.js";
 import unknownEnpoint from "./middlewares/unknownEndpoint.js";
 import connectToDb from "./utils/connectToDb.js";
 import errorHandler from "./middlewares/errorHandler.js";
-import dotenv from "dotenv";
 import config from "./utils/config.js";
 
-dotenv.config();
+
 
 const MONGODB_URI = config.MONGODB_URI;
 const app = express();
@@ -24,6 +24,7 @@ app.use(express.json());
 app.use(express.static("dist"));
 app.use(morgan(":method :url :status - :response-time ms :body"));
 
+app.use("/users",userRouter);
 app.use("/items", itemRouter);
 
 app.use(unknownEnpoint);
