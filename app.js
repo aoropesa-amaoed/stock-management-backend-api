@@ -5,6 +5,7 @@ import itemRouter from "./routes/itemRouter.js";
 import unknownEnpoint from "./utils/unknownEndpoint.js";
 import connectToDb from "./utils/connectToDb.js";
 import dotenv from "dotenv";
+import errorHandler from "./middlewares/errorHandler.js";
 
 dotenv.config();
 
@@ -25,5 +26,6 @@ app.use(morgan(":method :url :status - :response-time ms :body"));
 app.use("/items", itemRouter);
 
 app.use(unknownEnpoint);
+app.use(errorHandler);
 
 export default app;
