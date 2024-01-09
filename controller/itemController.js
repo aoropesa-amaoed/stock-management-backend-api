@@ -48,26 +48,24 @@ async function createNewItem(req, res, next){
     if(!body.itemCode || !body.itemDescription){
       return res.status(400).json({
         error:"Both item code and item description are required"});      
-    }   
-    try {
-      const item = new itemModel({
-        
-        itemCode: body.itemCode,
-        itemDescription: body.itemDescription,
-        inventoryUoM: body.inventoryUoM,
-        price: body.price,
-        InStock:body.InStock,
-        MinStock:body.MinStock,
-        MaxStock:body.MaxStock,        
-     })
+    } 
+    const item = new itemModel({        
+      itemCode: body.itemCode,
+      itemDescription: body.itemDescription,
+      inventoryUoM: body.inventoryUoM,
+      price: body.price,
+      InStock:body.InStock,
+      MinStock:body.MinStock,
+      MaxStock:body.MaxStock,        
+   })  
+    try {    
         //get the item master data array then push the new item
         const itemSaved =  await item.save().then((result) => result)
       //send response to client status 204 then end the request
         return res.status(201).json(itemSaved);  
     } catch (error) {
       next(error);
-    } 
-    
+    }     
 }
 async function updateItem(req, res, next) {
     const id = req.params.id;
@@ -80,23 +78,19 @@ async function updateItem(req, res, next) {
       MinStock,
       MaxStock,
     } = req.body;
-
-    try {
-      const updatedItem = {
-  
-        itemCode,
-        itemDescription,
-        inventoryUoM,
-        price,
-        InStock,
-        MinStock,
-        MaxStock,
-      };
-    
+    const updatedItem = {  
+      itemCode,
+      itemDescription,
+      inventoryUoM,
+      price,
+      InStock,
+      MinStock,
+      MaxStock,
+    };
+    try {    
       const returnedItem = await itemModel
         .findByIdAndUpdate(id, updatedItem, { new: true })
-        .then((result) => result);
-    
+        .then((result) => result);    
       return res.status(200).json(returnedItem);
     } catch (error) {
       next(error);
