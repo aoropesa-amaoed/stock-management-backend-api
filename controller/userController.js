@@ -14,9 +14,15 @@ async function createUser(req, res, next){
         userName,
         passwordHash,
     });
+
+    try {
+        
     const savedUser = await user.save();
 
     return res.status(201).json(savedUser);
+    } catch (error) {
+        next(error);
+    }
 }
 export default{
     createUser,
