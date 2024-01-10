@@ -1,5 +1,9 @@
 import  itemModel from "../models/itemModel.js";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import getTokenFrom from "../utils/getTokenFrom.js";
+import config from "../utils/config.js";
+
 
 async function getItemsInfo (_, res, next){
   try {
@@ -45,31 +49,37 @@ async function deleteItembyId(req, res, next){
 }
 async function createNewItem(req, res, next){    
     const body = req.body;
+    try {
+      const decodedToken = jwt.verify(getTokenFrom(req), config.JWT_SECRET) ;
 
-    const user = await User.findById(body.userId);
-    //validate if there is no content when creating a new item
-    if(!body.itemCode || !body.itemDescription){
-      return res.status(400).json({
-        error:"Both item code and item description are required"});      
-    } 
-    const item = new itemModel({        
-      category:body.category,
-      itemCode: body.itemCode,
-      itemDescription: body.itemDescription,
-      inventoryUoM: body.inventoryUoM,
-      price: body.price,
-      InStock:body.InStock,
-      MinStock:body.MinStock,
-      MaxStock:body.MaxStock,   
-      userId: user.id,     
-   })  
-    try {    
-        //get the item master data array then push the new item
-        const itemSaved =  await item.save().then((result) => result)
-        user.items = user.items.concat(itemSaved._id);
-        await user.save();
-      //send response to client status 204 then end the request
-        return res.status(201).json(itemSaved);  
+      if(!decodedToken.id){
+        return res.status(401).json({error: "token invalid" });
+      }
+
+      const user = await User.findById(decodedToken.id);
+      //validate if there is no content when creating a new item
+      if(!body.itemCode || !body.itemDescription){
+        return res.status(400).json({
+          error:"Both item code and item description are required"});      
+      } 
+      const item = new itemModel({        
+        category:body.category,
+        itemCode: body.itemCode,
+        itemDescription: body.itemDescription,
+        inventoryUoM: body.inventoryUoM,
+        price: body.price,
+        InStock:body.InStock,
+        MinStock:body.MinStock,
+        MaxStock:body.MaxStock,   
+        userId: user.id,     
+    })  
+          
+          //get the item master data array then push the new item
+          const itemSaved =  await item.save().then((result) => result)
+          user.items = user.items.concat(itemSaved._id);
+          await user.save();
+        //send response to client status 204 then end the request
+          return res.status(201).json(itemSaved);  
     } catch (error) {
       next(error);
     }     

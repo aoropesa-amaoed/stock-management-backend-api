@@ -40,7 +40,9 @@ async function loginUser(req, res, next){
         username: user.userName,
         id: user._id
     }
-    const token = jwt.sign(userToken, config.JWT_SECRET);
+    const token = jwt.sign(userToken, config.JWT_SECRET, {
+        expiresIn: 60
+    });
     return res.status(200).json({token, userName:user.userName, name: user.accountName})
 }
 
