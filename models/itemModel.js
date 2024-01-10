@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
+import User from "./User.js";
 
 const itemSchema = new mongoose.Schema({
     
+    category: String,
     itemCode: String,
     itemDescription: String,    
     inventoryUoM:String,
@@ -9,6 +11,10 @@ const itemSchema = new mongoose.Schema({
     InStock:Number,
     MinStock:Number,
     MaxStock:Number,
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
 });
 itemSchema.set("toJSON", {
     transform:(document, returnedObject)=>{

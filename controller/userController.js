@@ -41,7 +41,7 @@ async function loginUser(req, res, next){
         id: user._id
     }
     const token = jwt.sign(userToken, config.JWT_SECRET);
-    return res.status(200).json({token, userName:user.userName, name: user.name})
+    return res.status(200).json({token, userName:user.userName, name: user.accountName})
 }
 
 export default{
